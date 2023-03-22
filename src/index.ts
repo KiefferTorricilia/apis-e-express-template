@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import { courses, students } from './database'
-import { COURSE_STACK, TCourse } from './types'
+import { COURSE_STACK, TCourse, TStudents } from './types'
 
 const app = express()
 
@@ -55,9 +55,27 @@ app.get("/students/search", (req: Request, res: Response) => {
     const q = req.query.q as string
 
     const result = q ?
-    students.filter(item => item.name.toLowerCase().includes(q.toLowerCase()))
+    students.filter((item) => {
+        return item.name.toLowerCase().includes(q.toLowerCase())
+    })
     :
     students
 
     res.status(200).send(result)
-} )
+})
+
+app.post("/students", (req: Request, res: Response) => {
+
+    const id: string = req.body.id
+    const name: string = req.body.name
+    const age: number = req.body.age
+
+    const newStudents: TStudents = {
+        id, name, age
+    }
+
+    students.push(newStudents)
+    console.log("Students", students)
+    
+    res.status(201).send("Estudante cadastrado com sucesso")
+})
